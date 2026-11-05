@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おおきな あしあと ― みなみそうまの きょうりゅう</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#f7efe0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="おおきな あしあと">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 16px;
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #f7efe0; color: #4a3826; line-height: 1.9;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 {
+    font-size: 1.7rem; text-align: center; margin: 8px 0 4px; color: #7a4a21;
+    letter-spacing: .05em;
+  }
+  .sub { text-align: center; color: #977950; margin: 0 0 16px; font-size: 1rem; }
+  .card {
+    background: #fffdf7; border: 3px solid #e5d3ae; border-radius: 20px;
+    padding: 18px 20px; margin-bottom: 18px;
+    box-shadow: 0 3px 10px rgba(122,74,33,.08);
+  }
+  .story p { font-size: 1.22rem; margin: 0 0 .9em; }
+  .story p:last-child { margin-bottom: 0; }
+  .big { font-size: 1.45em; font-weight: bold; color: #b3541e; }
+  img.art { width: 100%; border-radius: 14px; display: block; }
+  h2 { font-size: 1.3rem; color: #7a4a21; margin: 0 0 10px; }
+  .btn {
+    display: inline-block; border: none; cursor: pointer;
+    background: #e8873a; color: #fff; font-family: inherit;
+    font-size: 1.2rem; font-weight: bold;
+    padding: 12px 26px; border-radius: 999px;
+    box-shadow: 0 4px 0 #b25f1d; transition: transform .08s;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #b25f1d; }
+  .btn.sub2 { background: #5d9b6a; box-shadow: 0 4px 0 #3f7049; }
+  .btn.sub2:active { box-shadow: 0 1px 0 #3f7049; }
+  .msg { font-size: 1.2rem; min-height: 2.2em; margin-top: 10px; font-weight: bold; color: #7a4a21; }
+  /* はかる あそび */
+  .stage { position: relative; margin-top: 8px; }
+  .track {
+    position: relative; height: 92px; background: #f1e4c8;
+    border-radius: 14px; overflow: hidden;
+  }
+  .bigprint {
+    position: absolute; top: 10px; left: 0; height: 72px;
+    background: #c99e67; border-radius: 46% 54% 52% 48% / 58% 60% 40% 42%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff8ec; font-weight: bold; font-size: 1.05rem;
+    transition: width 1.2s ease;
+  }
+  .tape {
+    position: absolute; top: -2px; left: 0; height: 16px; width: 0;
+    background: repeating-linear-gradient(90deg, #ffd94d 0 9.9%, #e8bd2e 9.9% 10%);
+    border-bottom: 2px solid #c79a1d; border-radius: 3px;
+    transition: width 1.2s ease;
+  }
+  .tape-num {
+    position: absolute; top: 20px; font-size: 1.5rem; font-weight: bold;
+    color: #b3541e; opacity: 0; transition: opacity .4s;
+  }
+  /* くらべる あそび */
+  .lane { position: relative; height: 54px; background: #eef3e2; border-radius: 12px; margin-top: 8px; overflow: hidden; }
+  .lane .goal {
+    position: absolute; top: 0; bottom: 0; border-left: 3px dashed #b3541e;
+  }
+  .lane .goal span {
+    position: absolute; top: 2px; left: 6px; font-size: .85rem; color: #b3541e; font-weight: bold; white-space: nowrap;
+  }
+  .shoe {
+    position: absolute; top: 9px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; animation: pop .25s ease;
+  }
+  @keyframes pop { from { transform: scale(.4); } to { transform: scale(1); } }
+  .question {
+    background: #fff3d6; border: 3px dashed #e8873a; border-radius: 20px;
+    padding: 18px 20px; font-size: 1.25rem; text-align: center;
+  }
+  .question .q { font-weight: bold; color: #7a4a21; }
+  .note { text-align: center; color: #a68b64; font-size: .9rem; margin-top: 6px; }
+  .bubble {
+    border-radius: 16px; padding: 10px 14px; margin: 8px 0;
+    font-size: 1.15rem; max-width: 92%;
+  }
+  .bubble.dino { background: #fdeeda; border: 2px solid #f0c48c; }
+  .bubble.you { background: #e4f0e6; border: 2px solid #a9cbb0; margin-left: auto; text-align: right; }
+  /* たどる あそび */
+  .walkstage {
+    position: relative; height: 300px; border-radius: 14px;
+    background: linear-gradient(180deg, #f6ecd4, #efdfba);
+    overflow: hidden; cursor: pointer;
+  }
+  .step {
+    position: absolute; font-size: 3rem; transform: translate(-50%, -50%);
+    animation: pop .25s ease; user-select: none;
+  }
+  .countbig { font-size: 2rem; font-weight: bold; color: #b3541e; }
+  /* クイズ */
+  .quizbtn {
+    display: block; width: 100%; margin: 8px 0; text-align: left;
+    background: #fdf6e3; border: 3px solid #e5d3ae; border-radius: 16px;
+    font-family: inherit; font-size: 1.2rem; padding: 12px 16px; cursor: pointer;
+  }
+  .quizbtn:active { background: #fdeeda; }
+  .shake { animation: shake .3s ease; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  /* タイムトラベル */
+  .timebig { font-size: 1.9rem; font-weight: bold; color: #7a4a21; text-align: center; min-height: 2.6em; }
+  /* さがし あそび */
+  .sandstage {
+    position: relative; height: 240px; border-radius: 14px; overflow: hidden;
+    background: radial-gradient(circle at 20% 30%, #f3e5c3, #e9d5a8 60%, #dfc48f);
+  }
+  .hiddenprint {
+    position: absolute; font-size: 2.6rem; transform: translate(-50%, -50%);
+    opacity: .28; filter: sepia(1) brightness(.92); cursor: pointer; user-select: none;
+    transition: opacity .3s, transform .3s;
+  }
+  .hiddenprint.found { opacity: 1; filter: none; transform: translate(-50%, -50%) scale(1.25); }
+  /* ぬりえ */
+  .palette { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+  .swatch {
+    width: 52px; height: 52px; border-radius: 50%; border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25); cursor: pointer; padding: 0;
+  }
+  .swatch.sel { outline: 4px solid #7a4a21; }
+  .paintpart { cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>おおきな あしあと</h1>
+  <p class="sub">― みなみそうまの きょうりゅう ―</p>
+
+  <div class="card">
+    <img class="art" src="footprint.webp" alt="大きな恐竜の足跡と、小さな子どもの靴のあと">
+  </div>
+
+  <div class="card story">
+    <p>ふくしまけんの <ruby>南相馬市<rt>みなみそうまし</rt></ruby>で、おおきな あしあとが みつかりました。2026年10月22日に、みなみそうま市から <ruby>発表<rt>はっぴょう</rt></ruby>がありました。</p>
+    <p>あしあとの ながさは、<span class="big">やく70センチ</span>。30センチの ものさしを 2つ ならべても、まだ たりません。</p>
+    <p>この あしあとが ついたのは、<span class="big">やく1おく6000まん年</span>も むかし。「ジュラ<ruby>紀<rt>き</rt></ruby>」という <ruby>時代<rt>じだい</rt></ruby>です。</p>
+    <p>日本で みつかった ジュラ紀の あしあとの なかでは、いちばん おおきい ものの ひとつです。</p>
+    <p>あしあとは、むかし ここを きょうりゅうが あるいた しるしです。</p>
+  </div>
+
+  <div class="card">
+    <h2>あそび①　あしあとを はかろう</h2>
+    <div class="stage">
+      <div class="track">
+        <div class="tape" id="tape"></div>
+        <div class="bigprint" id="bigprint" style="width:0%">あしあと</div>
+        <div class="tape-num" id="tapenum" style="right:8px;">70センチ！</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <button class="btn" id="measureBtn">はかる</button>
+    </div>
+    <div class="msg" id="measureMsg">ボタンを おすと、ものさしが のびるよ。</div>
+  </div>
+
+  <div class="card">
+    <h2>あそび②　くつと くらべよう</h2>
+    <p style="font-size:1.1rem; margin:0;">子どもの くつ（やく20センチ）を ならべて、あしあとの ながさ（70センチ）に ちかづけて みよう。</p>
+    <div class="lane" id="lane">
+      <div class="goal" id="goal"><span>70センチ</span></div>
+    </div>
+    <div style="margin-top:14px;">
+      <button class="btn sub2" id="shoeBtn">くつを おく</button>
+      <button class="btn sub2" id="resetBtn" style="background:#a68b64; box-shadow:0 4px 0 #7d6845;">はじめから</button>
+    </div>
+    <div class="msg" id="shoeMsg">くつは まだ 0こ。</div>
+  </div>
+
+  <div class="card">
+    <h2>あそび③　きょうりゅうさんに はなしかけよう</h2>
+    <p style="font-size:1.1rem; margin:0 0 8px;">マイクの ボタンを おして こえで 話しかけるか、文字を 打って「おくる」を おしてね。きょうりゅうさんが おへんじ するよ。</p>
+    <div id="chatlog" style="min-height: 3em;">
+      <div class="bubble dino">やあ！ ぼくは むかしの きょうりゅう。あしあとを 見てくれて ありがとう。何か きいて みて。</div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+      <button class="btn" id="micBtn" style="background:#c65b8f; box-shadow:0 4px 0 #96406a;">🎤 こえで はなす</button>
+      <input id="textIn" type="text" placeholder="ここに 打っても いいよ" style="flex:1; min-width:160px; font-size:1.1rem; padding:10px 14px; border:2px solid #e5d3ae; border-radius:999px; font-family:inherit;">
+      <button class="btn sub2" id="sendBtn">おくる</button>
+    </div>
+    <div class="msg" id="micMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>あそび④　あしあとを たどろう</h2>
+    <p style="font-size:1.1rem; margin:0;">すなの 上を タップすると、きょうりゅうの あしあとが 1つずつ 出てくるよ。10こ たどれるかな？</p>
+    <div class="walkstage" id="walkstage"></div>
+    <div class="msg">あしあと <span class="countbig" id="walkcount">0</span> こ</div>
+    <button class="btn" id="walkReset">はじめから</button>
+  </div>
+
+  <div class="card">
+    <h2>あそび⑤　どっちが 大きい？ クイズ</h2>
+    <div id="quizQ" style="font-size:1.25rem; font-weight:bold; color:#7a4a21;">もんだい 1： あしあと（70センチ）と ものさし（30センチ）、どっちが 大きい？</div>
+    <div id="quizBtns">
+      <button class="quizbtn" data-q="1" data-ok="1">🦕 あしあと（70センチ）</button>
+      <button class="quizbtn" data-q="1" data-ok="0">📏 ものさし（30センチ）</button>
+    </div>
+    <div class="msg" id="quizMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>あそび⑥　むかしへ タイムトラベル</h2>
+    <p style="font-size:1.1rem; margin:0;">ボタンを おすと、むかしへ さかのぼるよ。どこまで 行くかな？</p>
+    <div class="timebig" id="timedisp">いま</div>
+    <button class="btn" id="timeBtn" style="background:#6a7fc6; box-shadow:0 4px 0 #47578f;">むかしへ しゅっぱつ！</button>
+    <div class="msg" id="timeMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>あそび⑦　あしあと さがし</h2>
+    <p style="font-size:1.1rem; margin:0;">すなの なかに、あしあとが 3つ かくれて いるよ。タップして みつけよう。</p>
+    <div class="sandstage" id="sandstage"></div>
+    <div class="msg">みつけた あしあと <span class="countbig" id="findcount">0</span> こ ／ 3こ</div>
+    <button class="btn" id="findReset">はじめから</button>
+  </div>
+
+  <div class="card">
+    <h2>あそび⑧　あしあと ぬりえ</h2>
+    <p style="font-size:1.1rem; margin:0;">いろを えらんで、あしあとを タップすると、その いろに なるよ。</p>
+    <div class="palette" id="palette"></div>
+    <div style="text-align:center;">
+      <svg viewBox="0 0 220 230" width="240" height="250" role="img" aria-label="あしあとの ぬりえ">
+        <ellipse class="paintpart" data-part cx="55" cy="48" rx="19" ry="24" fill="#ffffff" stroke="#8a6a42" stroke-width="4"/>
+        <ellipse class="paintpart" data-part cx="110" cy="30" rx="21" ry="26" fill="#ffffff" stroke="#8a6a42" stroke-width="4"/>
+        <ellipse class="paintpart" data-part cx="165" cy="48" rx="19" ry="24" fill="#ffffff" stroke="#8a6a42" stroke-width="4"/>
+        <path class="paintpart" data-part d="M110 78 C 152 78 178 116 174 156 C 170 196 142 216 110 216 C 78 216 50 196 46 156 C 42 116 68 78 110 78 Z" fill="#ffffff" stroke="#8a6a42" stroke-width="4"/>
+      </svg>
+    </div>
+    <button class="btn" id="paintReset" style="background:#a68b64; box-shadow:0 4px 0 #7d6845;">まっしろに もどす</button>
+    <div class="msg" id="paintMsg"></div>
+  </div>
+
+  <div class="question">
+    <div class="q">おはなし しよう</div>
+    こんなに 大きな あしあとを つけた きょうりゅうは、どんな すがたを していたと 思う？
+  </div>
+
+  <p class="note">みなみそうま市の 発表（2026年10月22日）をもとに つくりました。</p>
+
+</div>
+
+<script>
+  var ctx = null;
+  function ac() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function tone(freq, t, dur, type, vol) {
+    var c = ac(); if (!c) return;
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    var s = c.currentTime + t;
+    g.gain.setValueAtTime(0.0001, s);
+    g.gain.exponentialRampToValueAtTime(vol || 0.12, s + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, s + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(s); o.stop(s + dur + 0.05);
+  }
+  function pop() { tone(420, 0, 0.12, 'triangle', 0.15); }
+  function fanfare() {
+    tone(523, 0, 0.22, 'triangle', 0.13);
+    tone(659, 0.14, 0.22, 'triangle', 0.13);
+    tone(784, 0.28, 0.4, 'triangle', 0.14);
+  }
+
+  /* あそび①：はかる（トラック幅＝80センチとして、70センチは87.5%） */
+  var measured = false;
+  document.getElementById('measureBtn').addEventListener('click', function () {
+    var tape = document.getElementById('tape'),
+        print = document.getElementById('bigprint'),
+        num = document.getElementById('tapenum'),
+        msg = document.getElementById('measureMsg');
+    if (measured) {
+      tape.style.width = '0'; print.style.width = '0%'; num.style.opacity = '0';
+      measured = false;
+      msg.textContent = 'もういちど はかって みよう。';
+      return;
+    }
+    print.style.width = '87.5%';
+    tape.style.width = '87.5%';
+    pop();
+    msg.textContent = 'ものさし 30センチ、60センチ……';
+    setTimeout(function () {
+      num.style.opacity = '1'; fanfare();
+      msg.textContent = '70センチ！ ものさし 2つと、まだ 10センチも あるね。';
+    }, 1250);
+    measured = true;
+  });
+
+  /* あそび②：くつとくらべる（トラック幅＝80センチ。くつ1つ＝20センチ＝25%） */
+  var shoes = 0;
+  var lane = document.getElementById('lane');
+  document.getElementById('goal').style.left = '87.5%';
+  document.getElementById('shoeBtn').addEventListener('click', function () {
+    var msg = document.getElementById('shoeMsg');
+    if (shoes >= 4) { msg.textContent = 'くつは 4こまで。はじめから ボタンで やりなおせるよ。'; return; }
+    var s = document.createElement('div');
+    s.className = 'shoe';
+    s.style.left = (shoes * 25) + '%';
+    s.style.width = '25%';
+    s.textContent = '👟';
+    lane.appendChild(s);
+    shoes++; pop();
+    var cm = shoes * 20;
+    if (shoes < 3) {
+      msg.textContent = 'くつ ' + shoes + 'こで ' + cm + 'センチ。まだ たりないね。';
+    } else if (shoes === 3) {
+      msg.textContent = 'くつ 3こで 60センチ。あと 10センチ、たりない！';
+    } else {
+      fanfare();
+      msg.textContent = 'くつ 4こで 80センチ。こえちゃった！ 70センチは、くつ 3こと 半分くらいだね。';
+    }
+  });
+  /* あそび③：きょうりゅうさんとの おしゃべり */
+  var chatlog = document.getElementById('chatlog');
+  function addBubble(text, who) {
+    var d = document.createElement('div');
+    d.className = 'bubble ' + who;
+    d.textContent = text;
+    chatlog.appendChild(d);
+    d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function speak(text) {
+    try {
+      if (!window.speechSynthesis) return;
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ja-JP'; u.rate = 1.0; u.pitch = 0.7;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  var genericReplies = [
+    'どすん、どすん。きこえたよ！',
+    'うんうん、それから？',
+    'ぼくの あしあと、大きいでしょ。',
+    'むかしの お話、もっと ききたいな。',
+    'いっしょに あそんでくれて ありがとう！'
+  ];
+  var gi = 0;
+  function dinoReply(q) {
+    var t = q.replace(/\s/g, '');
+    if (/こんにちは|こんばんは|おはよう|やあ|ハロー/.test(t)) return 'こんにちは！ 会えて うれしいよ。';
+    if (/なまえ|名前|だれ|誰|なんという/.test(t)) return 'ぼくの なまえは まだ わからないんだ。みつかったのは あしあとだけだからね。';
+    if (/何センチ|なんセンチ|大きさ|おおきさ|ながさ|長さ|あしあと|足跡/.test(t)) return 'ぼくの あしあとは、やく70センチ。ものさし 2つ分より 大きいんだよ。';
+    if (/いつ|むかし|昔|何年|なんねん|ジュラ/.test(t)) return 'ぼくが 歩いたのは、やく1おく6000まん年も むかし。ジュラ紀という 時代だよ。';
+    if (/どこ|みなみそうま|南相馬|ふくしま|福島/.test(t)) return 'ぼくの あしあとは、ふくしまけんの みなみそうましで みつかったんだ。';
+    if (/たべ|食べ|ごはん|食/.test(t)) return '何を 食べていたかは、まだ わからないんだ。あしあとだけでは 分からないことが いっぱい あるんだよ。';
+    if (/大きい|おおきい|でかい/.test(t)) return 'そう、ぼくは とっても 大きかったみたい。あしあとが その しょうこだね。';
+    if (/ありがとう/.test(t)) return 'どういたしまして！ また お話しようね。';
+    if (/バイバイ|さようなら|またね/.test(t)) return 'バイバイ！ また あしあとを 見にきてね。';
+    var r = genericReplies[gi % genericReplies.length]; gi++;
+    return r;
+  }
+  function askDino(text) {
+    text = (text || '').trim();
+    if (!text) return;
+    addBubble(text, 'you');
+    var r = dinoReply(text);
+    setTimeout(function () { addBubble('🦕 ' + r, 'dino'); speak(r); pop(); }, 350);
+  }
+  document.getElementById('sendBtn').addEventListener('click', function () {
+    var inp = document.getElementById('textIn');
+    askDino(inp.value); inp.value = '';
+  });
+  document.getElementById('textIn').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { askDino(e.target.value); e.target.value = ''; }
+  });
+  var recog = null;
+  document.getElementById('micBtn').addEventListener('click', function () {
+    var msg = document.getElementById('micMsg');
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { msg.textContent = 'この ブラウザでは こえが つかえないみたい。文字を 打って「おくる」を おしてね。'; return; }
+    if (recog) { try { recog.stop(); } catch (e) {} recog = null; return; }
+    recog = new SR();
+    recog.lang = 'ja-JP'; recog.interimResults = false; recog.maxAlternatives = 1;
+    msg.textContent = 'きいてるよ…… 話しかけてね。';
+    recog.onresult = function (ev) {
+      var text = ev.results[0][0].transcript;
+      msg.textContent = '';
+      askDino(text);
+    };
+    recog.onerror = function () { msg.textContent = 'うまく ききとれなかったみたい。もういちどか、文字で おくってね。'; recog = null; };
+    recog.onend = function () { recog = null; };
+    try { recog.start(); } catch (e) { msg.textContent = 'マイクが はじめられなかったみたい。文字で おくってね。'; recog = null; }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    var els = lane.querySelectorAll('.shoe');
+    for (var i = 0; i < els.length; i++) els[i].remove();
+    shoes = 0;
+    document.getElementById('shoeMsg').textContent = 'くつは まだ 0こ。';
+  });
+  /* あそび④：あしあとを たどる */
+  function stomp() { tone(82, 0, 0.22, 'sine', 0.22); tone(55, 0.02, 0.26, 'sine', 0.16); }
+  var walkPos = [
+    [12, 78, -18], [26, 60, 14], [40, 76, -16], [54, 58, 16], [68, 74, -14],
+    [80, 56, 18], [88, 36, -12], [74, 22, 14], [56, 30, -16], [40, 16, 10]
+  ];
+  var walkN = 0;
+  var walkstage = document.getElementById('walkstage');
+  walkstage.addEventListener('click', function () {
+    if (walkN >= walkPos.length) return;
+    var p = walkPos[walkN];
+    var d = document.createElement('div');
+    d.className = 'step';
+    d.style.left = p[0] + '%';
+    d.style.top = p[1] + '%';
+    d.style.transform = 'translate(-50%,-50%) rotate(' + p[2] + 'deg)';
+    d.textContent = '👣';
+    walkstage.appendChild(d);
+    walkN++; stomp();
+    document.getElementById('walkcount').textContent = walkN;
+    if (walkN === walkPos.length) {
+      var f = document.createElement('div');
+      f.className = 'step';
+      f.style.left = '22%'; f.style.top = '12%'; f.style.fontSize = '2.4rem';
+      f.textContent = '🚩';
+      walkstage.appendChild(f);
+      fanfare();
+    }
+  });
+  document.getElementById('walkReset').addEventListener('click', function () {
+    walkstage.innerHTML = ''; walkN = 0;
+    document.getElementById('walkcount').textContent = '0';
+  });
+
+  /* あそび⑤：どっちが大きい？クイズ */
+  var quizData = [
+    null,
+    { q: 'もんだい 1： あしあと（70センチ）と ものさし（30センチ）、どっちが 大きい？',
+      opts: [['🦕 あしあと（70センチ）', 1], ['📏 ものさし（30センチ）', 0]] },
+    { q: 'もんだい 2： ものさし（30センチ）と 子どもの くつ（20センチ）、どっちが 大きい？',
+      opts: [['📏 ものさし（30センチ）', 1], ['👟 子どもの くつ（20センチ）', 0]] },
+    { q: 'もんだい 3： ものさし 2つ分（60センチ）と あしあと（70センチ）、どっちが 大きい？',
+      opts: [['📏📏 ものさし 2つ分（60センチ）', 0], ['🦕 あしあと（70センチ）', 1]] }
+  ];
+  var quizNow = 1, quizScore = 0, quizLocked = false;
+  function quizRender() {
+    var d = quizData[quizNow];
+    document.getElementById('quizQ').textContent = d.q;
+    var box = document.getElementById('quizBtns');
+    box.innerHTML = '';
+    d.opts.forEach(function (o) {
+      var b = document.createElement('button');
+      b.className = 'quizbtn';
+      b.textContent = o[0];
+      b.addEventListener('click', function () { quizAnswer(b, o[1]); });
+      box.appendChild(b);
+    });
+    quizLocked = false;
+  }
+  function quizAnswer(btn, ok) {
+    if (quizLocked) return;
+    var msg = document.getElementById('quizMsg');
+    if (ok) {
+      quizLocked = true; quizScore++;
+      tone(880, 0, 0.15, 'triangle', 0.14); tone(1174, 0.12, 0.25, 'triangle', 0.14);
+      if (quizNow < 3) {
+        msg.textContent = 'せいかい！ つぎの もんだいへ。';
+        quizNow++;
+        setTimeout(function () { quizRender(); msg.textContent = ''; }, 900);
+      } else {
+        fanfare();
+        msg.textContent = 'おしまい！ ' + quizScore + 'もん せいかい。あしあとの 大きさ、よく 分かったね。';
+        document.getElementById('quizQ').textContent = 'クイズ おしまい';
+        document.getElementById('quizBtns').innerHTML = '';
+      }
+    } else {
+      tone(160, 0, 0.2, 'sawtooth', 0.06);
+      btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
+      msg.textContent = 'おしい！ もういちど 考えて みよう。';
+    }
+  }
+  quizRender();
+
+  /* あそび⑥：タイムトラベル */
+  var timeSteps = [
+    ['100年 むかし', 300], ['1000年 むかし', 300], ['1まん年 むかし', 300],
+    ['100まん年 むかし', 320], ['1000まん年 むかし', 340], ['5000まん年 むかし', 360],
+    ['1おく 6000まん年 むかし！', 0]
+  ];
+  var timeRunning = false;
+  document.getElementById('timeBtn').addEventListener('click', function () {
+    if (timeRunning) return;
+    timeRunning = true;
+    var disp = document.getElementById('timedisp'),
+        msg = document.getElementById('timeMsg'), i = 0;
+    msg.textContent = '';
+    disp.textContent = 'しゅっぱつ！';
+    tone(300, 0, 0.2, 'sine', 0.1);
+    function next() {
+      if (i >= timeSteps.length) {
+        fanfare();
+        disp.textContent = '🦕 ジュラ紀の 世界';
+        msg.textContent = 'ついた！ ここが きょうりゅうが 歩いていた 時代だよ。';
+        timeRunning = false;
+        return;
+      }
+      disp.textContent = timeSteps[i][0];
+      tone(340 + i * 90, 0, 0.18, 'sine', 0.1);
+      var wait = timeSteps[i][1] || 500;
+      i++;
+      setTimeout(next, Math.max(wait, 420));
+    }
+    setTimeout(next, 500);
+  });
+
+  /* あそび⑦：あしあと さがし */
+  var findPos = [[22, 34], [58, 66], [80, 26]];
+  var found = 0;
+  var sandstage = document.getElementById('sandstage');
+  function findSetup() {
+    sandstage.innerHTML = ''; found = 0;
+    document.getElementById('findcount').textContent = '0';
+    findPos.forEach(function (p) {
+      var d = document.createElement('div');
+      d.className = 'hiddenprint';
+      d.style.left = p[0] + '%';
+      d.style.top = p[1] + '%';
+      d.textContent = '👣';
+      d.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        if (d.classList.contains('found')) return;
+        d.classList.add('found');
+        found++; pop();
+        document.getElementById('findcount').textContent = found;
+        if (found === 3) fanfare();
+      });
+      sandstage.appendChild(d);
+    });
+  }
+  findSetup();
+  document.getElementById('findReset').addEventListener('click', findSetup);
+
+  /* あそび⑧：ぬりえ */
+  var paintColor = '#e74c3c';
+  var paletteColors = [
+    ['#e74c3c', 'あか'], ['#e8873a', 'オレンジ'], ['#f4c542', 'きいろ'],
+    ['#5d9b6a', 'みどり'], ['#4a7fc9', 'あお'], ['#8e6cc9', 'むらさき']
+  ];
+  var palette = document.getElementById('palette');
+  paletteColors.forEach(function (c, idx) {
+    var b = document.createElement('button');
+    b.className = 'swatch' + (idx === 0 ? ' sel' : '');
+    b.style.background = c[0];
+    b.title = c[1];
+    b.setAttribute('aria-label', c[1]);
+    b.addEventListener('click', function () {
+      paintColor = c[0]; pop();
+      var all = palette.querySelectorAll('.swatch');
+      for (var i = 0; i < all.length; i++) all[i].classList.remove('sel');
+      b.classList.add('sel');
+    });
+    palette.appendChild(b);
+  });
+  var parts = document.querySelectorAll('.paintpart');
+  parts.forEach(function (el) {
+    el.addEventListener('click', function () {
+      el.setAttribute('fill', paintColor); pop();
+    });
+  });
+  document.getElementById('paintReset').addEventListener('click', function () {
+    parts.forEach(function (el) { el.setAttribute('fill', '#ffffff'); });
+    document.getElementById('paintMsg').textContent = 'まっしろに もどったよ。';
+  });
+</script>
+</body>
+</html>
